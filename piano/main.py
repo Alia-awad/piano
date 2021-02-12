@@ -27,10 +27,7 @@ def drow_game():
     timer.tick(20)
     pygame.display.update()
 
-while True:
-    pygame.time.delay(20)
-    keys = pygame.key.get_pressed()
-    sound = {
+sound = {
         pygame.K_a: mixer("f.wav"),
         pygame.K_s: mixer("g.wav"),
         pygame.K_d: mixer("a.wav"),
@@ -45,7 +42,11 @@ while True:
         pygame.K_v: mixer("c2.wav"),
         pygame.K_b: mixer("d2.wav"),
         pygame.K_n: mixer("e2.wav")
-    }
+}
+
+while True:
+    pygame.time.delay(20)
+    keys = pygame.key.get_pressed()
 
 
     for event in pygame.event.get():
