@@ -5,17 +5,19 @@ pygame.mixer.pre_init(44100,-16,20,2048)
 pygame.mixer.init()
 pygame.init()
 
+pygame.mixer.set_num_channels(10) # to play multible sounds at the same time
+
 # setting the size of the screen
 screen=pygame.display.set_mode((1024,318))
 # setting the time
 timer=pygame.time.Clock()
 
 
-sounds_file = "res\\sounds\\"
-images_file = "res\\imgs\\" 
+sounds_folder = "res\\sounds\\"
+images_folder = "res\\imgs\\" 
 
 # loading paino image to the screen
-image=pygame.image.load(images_file + "piano1.png")
+image=pygame.image.load(images_folder + "piano1.png")
 
 
 ## colors for the screen
@@ -32,20 +34,20 @@ height=350
 ## mapping keys to sounds
 mixer=pygame.mixer.Sound
 sound = {
-        pygame.K_a: mixer(sounds_file + "f.wav"),
-        pygame.K_s: mixer(sounds_file + "g.wav"),
-        pygame.K_d: mixer(sounds_file + "a.wav"),
-        pygame.K_f: mixer(sounds_file + "b.wav"),
-        pygame.K_g: mixer(sounds_file + "c1.wav"),
-        pygame.K_h: mixer(sounds_file + "d1.wav"),
-        pygame.K_j: mixer(sounds_file + "e1.wav"),
-        pygame.K_k: mixer(sounds_file + "f1.wav"),
-        pygame.K_z: mixer(sounds_file + "g1.wav"),
-        pygame.K_x: mixer(sounds_file + "a1.wav"),
-        pygame.K_c: mixer(sounds_file + "b1.wav"),
-        pygame.K_v: mixer(sounds_file + "c2.wav"),
-        pygame.K_b: mixer(sounds_file + "d2.wav"),
-        pygame.K_n: mixer(sounds_file + "e2.wav")
+        pygame.K_a: mixer(sounds_folder + "f.wav"),
+        pygame.K_s: mixer(sounds_folder + "g.wav"),
+        pygame.K_d: mixer(sounds_folder + "a.wav"),
+        pygame.K_f: mixer(sounds_folder + "b.wav"),
+        pygame.K_g: mixer(sounds_folder + "c1.wav"),
+        pygame.K_h: mixer(sounds_folder + "d1.wav"),
+        pygame.K_j: mixer(sounds_folder + "e1.wav"),
+        pygame.K_k: mixer(sounds_folder + "f1.wav"),
+        pygame.K_z: mixer(sounds_folder + "g1.wav"),
+        pygame.K_x: mixer(sounds_folder + "a1.wav"),
+        pygame.K_c: mixer(sounds_folder + "b1.wav"),
+        pygame.K_v: mixer(sounds_folder + "c2.wav"),
+        pygame.K_b: mixer(sounds_folder + "d2.wav"),
+        pygame.K_n: mixer(sounds_folder + "e2.wav")
 }
 
 
@@ -55,17 +57,30 @@ def drow_game():
     screen.blit(image,(x,-y))
     timer.tick(20)
     pygame.display.update()
-
+#the number of channel working
+n_channel = 0
+last_key = 0
+time_of_last_click = 500000
 
 while True:
-    #pygame.time.delay(20)
+    pygame.time.delay(60)
     keys = pygame.key.get_pressed()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit()
     for key in sound:
-        if keys[key]:
-            sound.get(key).play()
-
+        
+        interval_between_clicks = pygame.time.get_ticks() - time_of_last_click
+        if (last_key == key) & (interval_between_clicks<= 1000):
+            continue
+        elif keys[key]:
+           pygame.mixer.Channel(n_channel).play(sound.get(key))
+           
+           last_key = key
+           time_of_last_click = pygame.time.get_ticks()
+           print(time_of_last_click)
+           
+           n_channel += 1
+           if n_channel >= 2: n_channel = 0
     drow_game()
